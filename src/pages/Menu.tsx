@@ -5,164 +5,108 @@ import { ChevronRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-// Import existing images
-import bruschetta from "@/assets/bruschetta.jpeg";
-import burrataSalad from "@/assets/burrata-salad.jpeg";
-import pastaPuttanesca from "@/assets/pasta-puttanesca.jpeg";
-import peachBruschetta from "@/assets/peach-bruschetta.jpeg";
-import burrataPesto from "@/assets/burrata-pesto.jpeg";
-import burrataPomegranate from "@/assets/burrata-pomegranate.jpeg";
-import dishesVariety from "@/assets/dishes-variety.jpeg";
-import signatureSalad from "@/assets/signature-salad.jpeg";
 import interior1 from "@/assets/interior-1.jpeg";
 
-// Import all numbered images
-import img1 from "@/assets/1.jpeg";
-import img2 from "@/assets/2.jpeg";
-import img3 from "@/assets/3.jpeg";
-import img4 from "@/assets/4.jpeg";
-import img5 from "@/assets/5.jpeg";
-import img6 from "@/assets/6.jpeg";
-import img7 from "@/assets/7.jpeg";
-import img8 from "@/assets/8.jpeg";
-import img9 from "@/assets/9.jpeg";
-import img10 from "@/assets/10.jpeg";
-import img11 from "@/assets/11.jpeg";
-import img12 from "@/assets/12.jpeg";
-import img13 from "@/assets/13.jpeg";
-import img14 from "@/assets/14.jpeg";
-import img15 from "@/assets/15.jpeg";
-import img16 from "@/assets/16.jpeg";
-import img17 from "@/assets/17.jpeg";
-import img18 from "@/assets/18.jpeg";
-import img19 from "@/assets/19.jpeg";
-import img20 from "@/assets/20.jpeg";
-import img21 from "@/assets/21.jpeg";
-import img22 from "@/assets/22.jpeg";
-import img23 from "@/assets/23.jpeg";
-import img24 from "@/assets/24.jpeg";
-import img25 from "@/assets/25.jpg";
-import img26 from "@/assets/26.jpg";
-import img27 from "@/assets/27.jpg";
-import img28 from "@/assets/28.jpg";
-import img29 from "@/assets/29.jpg";
-import img30 from "@/assets/30.jpg";
-import img31 from "@/assets/31.jpg";
 
-interface MenuItemWithImage {
+interface MenuItem {
   name: string;
-  description: string;
-  price: string;
-  image: string;
-}
-
-interface SimpleMenuItem {
-  name: string;
+  description?: string;
   price: string;
 }
 
-interface MenuCategoryWithImages {
+interface MenuCategory {
   title: string;
   icon: string;
-  type: "with-images";
-  items: MenuItemWithImage[];
+  displayMode: "cards" | "list";
+  items: MenuItem[];
+  subcategories?: { title: string; items: MenuItem[] }[];
 }
-
-interface SimpleMenuCategory {
-  title: string;
-  icon: string;
-  type: "simple";
-  items: SimpleMenuItem[];
-  subcategories?: { title: string; items: SimpleMenuItem[] }[];
-}
-
-type MenuCategory = MenuCategoryWithImages | SimpleMenuCategory;
 
 const menuData: MenuCategory[] = [
   {
     title: "Plats",
     icon: "🍖",
-    type: "with-images",
+    displayMode: "cards",
     items: [
-      { name: "Filet de bœuf", description: "Filet de bœuf tendre, cuisson au choix", price: "3500 DA", image: img5 },
-      { name: "Lamb chops", description: "Côtelettes d'agneau, mashed potatoes", price: "2800 DA", image: img17 },
-      { name: "Entrecôte", description: "Entrecôte grillée, cuisson au choix", price: "3200 DA", image: img29 },
-      { name: "Piccata", description: "Poulet, câpres, citron, persil", price: "1500 DA", image: img12 },
-      { name: "Panne", description: "Poulet, sauce champignons, tagliatelles, citron", price: "1600 DA", image: img16 },
-      { name: "Suprême de poulet à la crème", description: "Poulet, sauce champignons", price: "1800 DA", image: img4 },
-      { name: "Poulet à la Toscane", description: "Poulet, basilic, tomates cerises", price: "1800 DA", image: img8 },
-      { name: "Poulet Parmigiana", description: "Poulet pané, sauce tomate, mozzarella", price: "1800 DA", image: img24 },
-      { name: "Wok de bœuf", description: "Bœuf, légumes, sauce soja, miel", price: "1900 DA", image: img10 },
-      { name: "Wok de poulet", description: "Poulet, légumes, sauce soja, miel", price: "1600 DA", image: img18 },
+      { name: "Filet de bœuf", description: "Filet de bœuf tendre, cuisson au choix", price: "3500 DA" },
+      { name: "Lamb chops", description: "Côtelettes d'agneau, mashed potatoes", price: "2800 DA" },
+      { name: "Entrecôte", description: "Entrecôte grillée, cuisson au choix", price: "3200 DA" },
+      { name: "Piccata", description: "Poulet, câpres, citron, persil", price: "1500 DA" },
+      { name: "Panne", description: "Poulet, sauce champignons, tagliatelles, citron", price: "1600 DA" },
+      { name: "Suprême de poulet à la crème", description: "Poulet, sauce champignons", price: "1800 DA" },
+      { name: "Poulet à la Toscane", description: "Poulet, basilic, tomates cerises", price: "1800 DA" },
+      { name: "Poulet Parmigiana", description: "Poulet pané, sauce tomate, mozzarella", price: "1800 DA" },
+      { name: "Wok de bœuf", description: "Bœuf, légumes, sauce soja, miel", price: "1900 DA" },
+      { name: "Wok de poulet", description: "Poulet, légumes, sauce soja, miel", price: "1600 DA" },
     ],
   },
   {
     title: "Pâtes",
     icon: "🍝",
-    type: "with-images",
+    displayMode: "cards",
     items: [
-      { name: "Pâtes bolognaises", description: "Sauce bolognaise maison, parmesan", price: "1400 DA", image: img26 },
-      { name: "Pâtes aux crevettes", description: "Crevettes sautées, ail, huile d'olive", price: "1700 DA", image: img30 },
-      { name: "Pâtes Alfredo aux champignons", description: "Sauce Alfredo crémeuse, champignons", price: "1600 DA", image: img27 },
-      { name: "Pâtes fruits de mer", description: "Assortiment de fruits de mer frais", price: "2000 DA", image: img31 },
-      { name: "Pâtes Burrata", description: "Burrata crémeuse, tomates cerises, basilic", price: "1600 DA", image: img25 },
-      { name: "Pâtes Arrabiata", description: "Sauce tomate épicée, piment, ail", price: "900 DA", image: img14 },
-      { name: "Pâtes au saumon frais", description: "Saumon frais, crème, aneth", price: "2500 DA", image: img15 },
-      { name: "Pâtes thon et champignons", description: "Thon, champignons sautés, herbes", price: "1200 DA", image: img28 },
-      { name: "Pâtes ricotta et légumes", description: "Ricotta crémeuse, légumes de saison", price: "1300 DA", image: img13 },
-      { name: "Pâtes bœuf", description: "Émincé de bœuf, sauce au choix", price: "1700 DA", image: img3 },
-      { name: "Spaghettis puttanesca", description: "Olives, câpres, tomates, anchois", price: "1400 DA", image: pastaPuttanesca },
+      { name: "Pâtes bolognaises", description: "Sauce bolognaise maison, parmesan", price: "1400 DA" },
+      { name: "Pâtes aux crevettes", description: "Crevettes sautées, ail, huile d'olive", price: "1700 DA" },
+      { name: "Pâtes Alfredo aux champignons", description: "Sauce Alfredo crémeuse, champignons", price: "1600 DA" },
+      { name: "Pâtes fruits de mer", description: "Assortiment de fruits de mer frais", price: "2000 DA" },
+      { name: "Pâtes Burrata", description: "Burrata crémeuse, tomates cerises, basilic", price: "1600 DA" },
+      { name: "Pâtes Arrabiata", description: "Sauce tomate épicée, piment, ail", price: "900 DA" },
+      { name: "Pâtes au saumon frais", description: "Saumon frais, crème, aneth", price: "2500 DA" },
+      { name: "Pâtes thon et champignons", description: "Thon, champignons sautés, herbes", price: "1200 DA" },
+      { name: "Pâtes ricotta et légumes", description: "Ricotta crémeuse, légumes de saison", price: "1300 DA" },
+      { name: "Pâtes bœuf", description: "Émincé de bœuf, sauce au choix", price: "1700 DA" },
+      { name: "Spaghettis puttanesca", description: "Olives, câpres, tomates, anchois", price: "1400 DA" },
     ],
   },
   {
     title: "Entrées",
     icon: "🥗",
-    type: "with-images",
+    displayMode: "cards",
     items: [
-      { name: "César", description: "Laitue, tomates cerises, croûtons, fromage, œufs, poulet", price: "1000 DA", image: img1 },
-      { name: "Burrata", description: "Burrata, tomates cerises, fruits de saison, pesto", price: "1800 DA", image: burrataPomegranate },
-      { name: "Stracciatella", description: "Stracciatella, tomates cerises, pesto", price: "1600 DA", image: burrataPesto },
-      { name: "Houmous bowl", description: "Houmous, poivron, tomate, concombre, pois chiches, oignons", price: "1000 DA", image: img20 },
-      { name: "Salade feta concombre", description: "Fromage feta, concombre, quinoa, menthe, radis", price: "1400 DA", image: img21 },
-      { name: "Eggplant Caprese", description: "Aubergines grillées, mozzarella, tomate, basilic", price: "1200 DA", image: img22 },
-      { name: "Healthy Mediterranean", description: "Tomates cerises, concombre, hummus, feta", price: "1100 DA", image: img23 },
+      { name: "César", description: "Laitue, tomates cerises, croûtons, fromage, œufs, poulet", price: "1000 DA" },
+      { name: "Burrata", description: "Burrata, tomates cerises, fruits de saison, pesto", price: "1800 DA" },
+      { name: "Stracciatella", description: "Stracciatella, tomates cerises, pesto", price: "1600 DA" },
+      { name: "Houmous bowl", description: "Houmous, poivron, tomate, concombre, pois chiches, oignons", price: "1000 DA" },
+      { name: "Salade feta concombre", description: "Fromage feta, concombre, quinoa, menthe, radis", price: "1400 DA" },
+      { name: "Eggplant Caprese", description: "Aubergines grillées, mozzarella, tomate, basilic", price: "1200 DA" },
+      { name: "Healthy Mediterranean", description: "Tomates cerises, concombre, hummus, feta", price: "1100 DA" },
     ],
   },
   {
     title: "Bruschetta",
     icon: "🍞",
-    type: "with-images",
+    displayMode: "cards",
     items: [
-      { name: "Avocats champignons", description: "Avocat crémeux, champignons sautés, herbes fraîches", price: "1600 DA", image: peachBruschetta },
-      { name: "Feta au fruit", description: "Feta émiettée, fruits de saison, miel", price: "1300 DA", image: bruschetta },
-      { name: "Stracciatella au tomate confit", description: "Stracciatella crémeuse, tomates confites, basilic", price: "1500 DA", image: burrataPesto },
+      { name: "Avocats champignons", description: "Avocat crémeux, champignons sautés, herbes fraîches", price: "1600 DA" },
+      { name: "Feta au fruit", description: "Feta émiettée, fruits de saison, miel", price: "1300 DA" },
+      { name: "Stracciatella au tomate confit", description: "Stracciatella crémeuse, tomates confites, basilic", price: "1500 DA" },
     ],
   },
   {
     title: "Raviolis",
     icon: "🥟",
-    type: "with-images",
+    displayMode: "cards",
     items: [
-      { name: "Poulet sauce champignon", description: "Raviolis farcis au poulet, sauce aux champignons", price: "1000 DA", image: img7 },
-      { name: "Bœuf sauce crémeuse", description: "Raviolis au bœuf, sauce crémeuse onctueuse", price: "1200 DA", image: img2 },
-      { name: "Crevettes sauce crémeuse safran citron", description: "Raviolis aux crevettes, safran et citron", price: "1400 DA", image: img6 },
+      { name: "Poulet sauce champignon", description: "Raviolis farcis au poulet, sauce aux champignons", price: "1000 DA" },
+      { name: "Bœuf sauce crémeuse", description: "Raviolis au bœuf, sauce crémeuse onctueuse", price: "1200 DA" },
+      { name: "Crevettes sauce crémeuse safran citron", description: "Raviolis aux crevettes, safran et citron", price: "1400 DA" },
     ],
   },
   {
     title: "Risotto",
     icon: "🍚",
-    type: "with-images",
+    displayMode: "cards",
     items: [
-      { name: "Risotto au poulet", description: "Risotto crémeux, poulet grillé, parmesan", price: "1500 DA", image: img9 },
-      { name: "Risotto aux crevettes", description: "Crevettes sautées, ail, persil", price: "1700 DA", image: img11 },
-      { name: "Risotto pesto et burrata", description: "Pesto maison, burrata fondante", price: "1800 DA", image: img19 },
-      { name: "Risotto au saumon", description: "Saumon frais, crème citronnée", price: "2500 DA", image: signatureSalad },
+      { name: "Risotto au poulet", description: "Risotto crémeux, poulet grillé, parmesan", price: "1500 DA" },
+      { name: "Risotto aux crevettes", description: "Crevettes sautées, ail, persil", price: "1700 DA" },
+      { name: "Risotto pesto et burrata", description: "Pesto maison, burrata fondante", price: "1800 DA" },
+      { name: "Risotto au saumon", description: "Saumon frais, crème citronnée", price: "2500 DA" },
     ],
   },
   {
     title: "Sandwich",
     icon: "🥪",
-    type: "simple",
+    displayMode: "list",
     items: [
       { name: "Philly cheese steak", price: "1000 DA" },
       { name: "Steak au cheddar BBQ", price: "1300 DA" },
@@ -175,7 +119,7 @@ const menuData: MenuCategory[] = [
   {
     title: "Burger",
     icon: "🍔",
-    type: "simple",
+    displayMode: "list",
     items: [
       { name: "Buffalo chicken", price: "700 DA" },
       { name: "Cheese burger", price: "800 DA" },
@@ -188,7 +132,7 @@ const menuData: MenuCategory[] = [
   {
     title: "Crêpes",
     icon: "🥞",
-    type: "simple",
+    displayMode: "list",
     items: [
       { name: "Classique (chocolat, nutella, chantilly)", price: "550 DA" },
       { name: "La Banana (chocolat, nutella, banane, chantilly)", price: "650 DA" },
@@ -201,7 +145,8 @@ const menuData: MenuCategory[] = [
   {
     title: "Boissons Chaudes",
     icon: "☕",
-    type: "simple",
+    displayMode: "list",
+    items: [],
     subcategories: [
       {
         title: "Café",
@@ -228,12 +173,12 @@ const menuData: MenuCategory[] = [
         ],
       },
     ],
-    items: [],
   },
   {
     title: "Boissons Fraîches",
     icon: "🍹",
-    type: "simple",
+    displayMode: "list",
+    items: [],
     subcategories: [
       {
         title: "Boissons de base",
@@ -297,64 +242,65 @@ const menuData: MenuCategory[] = [
         ],
       },
     ],
-    items: [],
   },
 ];
 
-const MenuItemCard = ({ item, index }: { item: MenuItemWithImage; index: number }) => {
+const MenuItemCard = ({ item, index }: { item: MenuItem; index: number }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.05 }}
-      className="group relative bg-card rounded-2xl overflow-hidden border border-border/50 hover:border-gold/40 transition-all duration-500 hover:shadow-2xl hover:shadow-gold/10"
+      transition={{ duration: 0.4, delay: index * 0.05 }}
+      className="group relative bg-white/5 backdrop-blur-md p-6 sm:p-8 rounded-2xl border border-white/10 hover:border-gold/50 transition-all duration-500 hover:bg-white/10 flex flex-col justify-between overflow-hidden hover:shadow-lg hover:shadow-gold/5"
     >
-      <div className="relative h-40 sm:h-48 overflow-hidden">
-        <img
-          src={item.image}
-          alt={item.name}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-          loading="lazy"
-          decoding="async"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
-        <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4">
-          <h3 className="font-serif text-base sm:text-lg font-bold text-primary-foreground group-hover:text-gold transition-colors line-clamp-1">
-            {item.name}
-          </h3>
+        {/* Decorative corner */}
+        <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        <div className="relative z-10">
+            <div className="flex justify-between items-start gap-4 mb-2">
+                <h3 className="font-serif text-xl sm:text-2xl font-bold text-white group-hover:text-gold transition-colors duration-300">
+                {item.name}
+                </h3>
+                <span className="shrink-0 text-xl sm:text-2xl font-serif font-bold text-[#D4AF37] drop-shadow-sm">
+                {item.price}
+                </span>
+            </div>
+            
+            {/* Elegant separator */}
+            <div className="w-8 h-0.5 bg-gold/30 mb-4 group-hover:w-full group-hover:bg-gold/50 transition-all duration-700 ease-out" />
+            
+            {item.description && (
+                <p className="text-gray-300 text-sm sm:text-base leading-relaxed font-light tracking-wide">
+                    {item.description}
+                </p>
+            )}
         </div>
-        <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
-          <span className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold gold-gradient text-foreground shadow-lg">
-            {item.price}
-          </span>
-        </div>
-      </div>
-      <div className="p-3 sm:p-4">
-        <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed line-clamp-2">
-          {item.description}
-        </p>
-      </div>
     </motion.div>
   );
 };
 
-const SimpleMenuList = ({ items }: { items: SimpleMenuItem[] }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
+const SimpleMenuList = ({ items }: { items: MenuItem[] }) => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
     {items.map((item, index) => (
       <motion.div
         key={item.name}
-        initial={{ opacity: 0, x: -20 }}
+        initial={{ opacity: 0, x: -10 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.3, delay: index * 0.05 }}
-        className="flex justify-between items-center py-3 sm:py-4 px-3 sm:px-5 bg-card rounded-xl border border-border/50 hover:border-gold/40 hover:bg-gold/5 transition-all duration-300 group"
+        className="flex items-end justify-between py-3 border-b border-white/10 hover:border-gold/30 group transition-colors px-2"
       >
-        <span className="text-foreground font-medium group-hover:text-gold transition-colors text-sm sm:text-base pr-2">{item.name}</span>
-        <span className="text-gold font-bold whitespace-nowrap text-xs sm:text-sm">{item.price}</span>
+        <div className="flex flex-col">
+            <span className="text-white font-serif text-base sm:text-lg font-medium group-hover:text-gold transition-colors">{item.name}</span>
+        </div>
+        
+        <div className="flex-grow mx-4 mb-1.5 border-b border-dotted border-white/20 hidden sm:block opacity-30 group-hover:border-gold/40 group-hover:opacity-60 transition-all"></div>
+        
+        <span className="text-[#D4AF37] font-serif font-bold whitespace-nowrap text-base sm:text-lg">{item.price}</span>
       </motion.div>
     ))}
   </div>
@@ -376,8 +322,8 @@ const CategoryButton = ({
     className={`
       flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-medium text-xs sm:text-sm transition-all duration-300 whitespace-nowrap flex-shrink-0
       ${isActive 
-        ? 'bg-gold text-foreground shadow-lg shadow-gold/40 border-2 border-gold' 
-        : 'bg-background/80 backdrop-blur-sm border-2 border-border/30 text-foreground hover:border-gold/50 hover:bg-gold/10 hover:shadow-md'
+        ? 'bg-gold text-black shadow-lg shadow-gold/40 border-2 border-gold' 
+        : 'bg-neutral-900/80 backdrop-blur-sm border-2 border-white/10 text-white hover:border-gold/50 hover:bg-gold/10 hover:shadow-md'
       }
     `}
   >
@@ -400,18 +346,18 @@ const Menu = () => {
   }, [activeCategory]);
 
   return (
-    <main className="min-h-screen bg-background overflow-x-hidden">
+    <main className="min-h-screen bg-neutral-950 overflow-x-hidden">
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-24 text-primary-foreground">
+      <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-24 text-white">
         <div className="absolute inset-0">
           <img
             src={interior1}
             alt="Intérieur du restaurant"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/60 to-foreground/90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90" />
         </div>
         <div className="container-custom text-center relative z-10 px-4">
           <motion.span
@@ -434,7 +380,7 @@ const Menu = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-primary-foreground/80 max-w-2xl mx-auto text-base sm:text-lg"
+            className="text-white/90 max-w-2xl mx-auto text-base sm:text-lg"
           >
             Des ingrédients frais, des recettes authentiques et une passion pour 
             l'excellence culinaire.
@@ -443,7 +389,7 @@ const Menu = () => {
       </section>
 
       {/* Category Filter Buttons */}
-      <section className="sticky top-16 z-30 bg-background/95 backdrop-blur-xl border-b border-border/50 py-3 shadow-sm overflow-hidden">
+      <section className="sticky top-16 z-30 bg-neutral-950/95 backdrop-blur-xl border-b border-white/5 py-3 shadow-sm overflow-hidden">
         <div className="w-full relative">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -467,7 +413,7 @@ const Menu = () => {
           </motion.div>
           
           {/* Premium Scroll Indicator - Mobile Only */}
-          <div className="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden z-10" />
+          <div className="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-black to-transparent pointer-events-none sm:hidden z-10" />
           
           <motion.div
             initial={{ opacity: 0, x: 10 }}
@@ -478,7 +424,7 @@ const Menu = () => {
             <motion.div 
               animate={{ x: [0, 5, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="flex items-center gap-1.5 bg-foreground/95 backdrop-blur-md border border-gold/50 px-3 py-1.5 rounded-full shadow-2xl shadow-black/50"
+              className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md border border-gold/50 px-3 py-1.5 rounded-full shadow-2xl shadow-black/50"
             >
               <span className="text-[10px] uppercase tracking-widest font-bold text-gold">Glissez</span>
               <ChevronRight size={12} className="text-gold" />
@@ -509,19 +455,19 @@ const Menu = () => {
                   >
                     <span className="text-3xl sm:text-4xl">{category.icon}</span>
                     <div>
-                      <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+                      <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                         {category.title}
                       </h2>
                       <div className="w-12 sm:w-16 h-1 gold-gradient mt-1.5 sm:mt-2 rounded-full" />
                     </div>
                     {category.title === "Pâtes" && (
-                      <span className="hidden lg:inline-block ml-auto text-muted-foreground text-sm italic bg-muted px-4 py-2 rounded-full">
+                      <span className="hidden lg:inline-block ml-auto text-gray-400 text-sm italic bg-white/5 px-4 py-2 rounded-full">
                         Spaghetti – Tagliatelles – Penne – Linguine
                       </span>
                     )}
                   </motion.div>
 
-                  {category.type === "with-images" ? (
+                  {category.displayMode === "cards" ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                       {category.items.map((item, index) => (
                         <MenuItemCard key={item.name} item={item} index={index} />
@@ -532,7 +478,7 @@ const Menu = () => {
                       {category.subcategories ? (
                         category.subcategories.map((sub) => (
                           <div key={sub.title}>
-                            <h3 className="font-serif text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4 flex items-center gap-2">
+                            <h3 className="font-serif text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
                               <div className="w-2 h-2 rounded-full gold-gradient" />
                               {sub.title}
                             </h3>
@@ -550,6 +496,7 @@ const Menu = () => {
           </AnimatePresence>
         </div>
       </section>
+
 
       <Footer />
     </main>

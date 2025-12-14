@@ -9,13 +9,13 @@ const OpeningHoursSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const hours = [
-    { day: "LUNDI", time: "08h30 - 23h30" },
-    { day: "MARDI", time: "08h30 - 23h30" },
-    { day: "MERCREDI", time: "08h30 - 23h30" },
-    { day: "JEUDI", time: "08h30 - 23h30" },
-    { day: "VENDREDI", time: "08h30 - 23h30" },
-    { day: "SAMEDI", time: "12h00 - 23h30" },
-    { day: "DIMANCHE", time: "12h00 - 22h30" },
+    { day: "LUNDI", time: "12h00 - 23h00" },
+    { day: "MARDI", time: "12h00 - 23h00" },
+    { day: "MERCREDI", time: "12h00 - 23h00" },
+    { day: "JEUDI", time: "12h00 - 23h00" },
+    { day: "VENDREDI", time: "12h00 - 23h00" },
+    { day: "SAMEDI", time: "12h00 - 23h00" },
+    { day: "DIMANCHE", time: "12h00 - 23h00" },
   ];
 
   return (

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Contact Form - Netlify Detection</title>
+</head>
+
+<body>
+    <!-- Ce fichier est utilisé uniquement par Netlify pour détecter le formulaire lors du build -->
+    <!-- Il n'est pas visible sur le site public -->
+    <form name="contact" method="POST" data-netlify="true" netlify-honeypot="botField">
+        <input type="hidden" name="form-name" value="contact" />
+        <p style="display: none;">
+            <label>Ne remplissez pas ce champ si vous êtes humain : <input name="botField" /></label>
+        </p>
+        <p>
+            <label>Nom: <input type="text" name="name" /></label>
+        </p>
+        <p>
+            <label>Email: <input type="email" name="email" /></label>
+        </p>
+        <p>
+            <label>Sujet: <input type="text" name="subject" /></label>
+        </p>
+        <p>
+            <label>Message: <textarea name="message"></textarea></label>
+        </p>
+        <p>
+            <button type="submit">Envoyer</button>
+        </p>
+    </form>
+</body>
+
+</html>

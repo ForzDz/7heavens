@@ -1,39 +1,182 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, Send, Instagram, Facebook } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, Instagram, Facebook, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import emailjs from "@emailjs/browser";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import interior3 from "@/assets/interior-3.jpeg";
 
+interface FormErrors {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+}
+
 const Contact = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
     message: "",
+    botField: "", // Honeypot field
   });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const validateField = (name: string, value: string): string | undefined => {
+    switch (name) {
+      case "name":
+        if (!value.trim()) return "Le nom est requis";
+        if (value.trim().length < 2) return "Le nom doit contenir au moins 2 caractères";
+        return undefined;
+      case "email":
+        if (!value.trim()) return "L'email est requis";
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) return "Veuillez entrer un email valide";
+        return undefined;
+      case "subject":
+        if (!value.trim()) return "Le sujet est requis";
+        if (value.trim().length < 3) return "Le sujet doit contenir au moins 3 caractères";
+        return undefined;
+      case "message":
+        if (!value.trim()) return "Le message est requis";
+        if (value.trim().length < 10) return "Le message doit contenir au moins 10 caractères";
+        return undefined;
+      default:
+        return undefined;
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Message envoyé !",
-      description: "Nous vous répondrons dans les plus brefs délais.",
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    
+    // Validate on change if field has been touched
+    if (touched[name]) {
+      const error = validateField(name, value);
+      setErrors({ ...errors, [name]: error });
+    }
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setTouched({ ...touched, [name]: true });
+    const error = validateField(name, value);
+    setErrors({ ...errors, [name]: error });
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    let isValid = true;
+
+    Object.keys(formData).forEach((key) => {
+      if (key !== "botField") {
+        const error = validateField(key, formData[key as keyof typeof formData]);
+        if (error) {
+          newErrors[key as keyof FormErrors] = error;
+          isValid = false;
+        }
+      }
     });
-    setFormData({ name: "", email: "", subject: "", message: "" });
+
+    setErrors(newErrors);
+    setTouched({
+      name: true,
+      email: true,
+      subject: true,
+      message: true,
+    });
+    return isValid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Honeypot check
+    if (formData.botField) {
+      return; // Silent fail for bots
+    }
+
+    if (!validateForm()) {
+      toast({
+        title: "Formulaire incomplet",
+        description: "Veuillez corriger les erreurs avant d'envoyer.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Configuration EmailJS pour envoyer directement à 7.heaven.bistro@gmail.com
+      const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+      const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+      if (SERVICE_ID && TEMPLATE_ID && PUBLIC_KEY) {
+        // Envoi via EmailJS directement à l'email du restaurant
+        const templateParams = {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          to_email: "7.heaven.bistro@gmail.com",
+          reply_to: formData.email,
+        };
+
+        await emailjs.send(
+          SERVICE_ID,
+          TEMPLATE_ID,
+          templateParams,
+          PUBLIC_KEY
+        );
+      } else {
+        // Fallback: Envoi via Netlify Forms (nécessite configuration dans Netlify Dashboard)
+        const myForm = e.target as HTMLFormElement;
+        const formDataToSend = new FormData(myForm);
+        
+        const response = await fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams(formDataToSend as any).toString(),
+        });
+
+        if (!response.ok) {
+          throw new Error("Erreur lors de l'envoi via Netlify");
+        }
+      }
+
+      toast({
+        title: "Message envoyé avec succès !",
+        description: "Nous vous répondrons dans les plus brefs délais (sous 24h).",
+      });
+      
+      setFormData({ name: "", email: "", subject: "", message: "", botField: "" });
+      setErrors({});
+      setTouched({});
+    } catch (error) {
+      toast({
+        title: "Erreur d'envoi",
+        description: "Une erreur est survenue. Veuillez réessayer ou nous contacter directement.",
+        variant: "destructive",
+      });
+      console.error("Form submission error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
     {
       icon: MapPin,
       title: "Adresse",
-      content: "Centre-ville, Oran, Algérie",
-      subtext: "Près de la Place du 1er Novembre",
+      content: "12 Rue Boudjellal Ahmed",
+      subtext: "Hai El Moudjahiddine, Oran, Algérie",
       href: "https://www.google.com/maps/search/?api=1&query=7+Heavens+12+Rue+Boudjellal+Ahmed+Oran",
       target: "_blank"
     },
@@ -41,20 +184,20 @@ const Contact = () => {
       icon: Phone,
       title: "Téléphone",
       content: "+213 54 25 52 188",
-      subtext: "Disponible a tous les moments ",
+      subtext: "Disponible à tous moments",
       href: "tel:+213542552188"
     },
     {
       icon: Mail,
       title: "Email",
-      content: "7heavens@gmail.com",
+      content: "7.heaven.bistro@gmail.com",
       subtext: "Réponse sous 24h",
-      href: "mailto:7heavens@gmail.com"
+      href: "mailto:7.heaven.bistro@gmail.com"
     },
     {
       icon: Clock,
       title: "Horaires",
-      content: "9h00 - 22h00",
+      content: "12h00 - 23h00",
       subtext: "Ouvert tous les jours",
       href: "/#horaires"
     },
@@ -72,7 +215,7 @@ const Contact = () => {
             alt="Intérieur du restaurant"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-foreground/80" />
+          <div className="absolute inset-0 bg-black/60" />
         </div>
         <div className="container-custom text-center relative z-10 px-4">
           <motion.span
@@ -89,13 +232,13 @@ const Contact = () => {
             transition={{ delay: 0.3 }}
             className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold mt-3 sm:mt-4 mb-4 sm:mb-6"
           >
-            <span className="gold-text">Contact</span>
+            <span className="text-white">Contact</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-primary-foreground/70 max-w-2xl mx-auto text-sm sm:text-base px-4"
+            className="text-white/90 max-w-2xl mx-auto text-sm sm:text-base px-4"
           >
             Une question, une suggestion ou envie de privatiser notre espace ? 
             N'hésitez pas à nous contacter.
@@ -232,10 +375,23 @@ const Contact = () => {
                   title="Localisation 7 Heavens Oran"
                 />
               </div>
-              <p className="text-muted-foreground">
-                Situé au cœur d'Oran, notre restaurant est facilement accessible 
-                en voiture ou en transport en commun. Un parking est disponible à proximité.
-              </p>
+              <div className="space-y-4">
+                <p className="text-muted-foreground">
+                  Situé au cœur d'Oran, notre restaurant est facilement accessible 
+                  en voiture ou en transport en commun. Un parking est disponible à proximité.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=7+Heavens+12+Rue+Boudjellal+Ahmed+Oran"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-outline-gold text-center"
+                  >
+                    <MapPin size={18} className="mr-2 inline" />
+                    Ouvrir dans Google Maps
+                  </a>
+                </div>
+              </div>
             </motion.div>
 
             {/* Contact Form */}
@@ -245,86 +401,201 @@ const Contact = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="font-serif text-3xl font-bold text-foreground mb-6">
-                Envoyez-nous un Message
-              </h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid sm:grid-cols-2 gap-6">
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Votre nom"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="input-luxury"
-                    required
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Votre email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="input-luxury"
-                    required
-                  />
-                </div>
+              <div className="mb-6">
+                <h2 className="font-serif text-3xl font-bold text-foreground mb-2">
+                  Envoyez-nous un Message
+                </h2>
+                <p className="text-muted-foreground">
+                  Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.
+                </p>
+              </div>
+              
+              <form 
+                name="contact" 
+                method="POST" 
+                data-netlify="true" 
+                onSubmit={handleSubmit} 
+                className="space-y-6"
+              >
+                <input type="hidden" name="form-name" value="contact" />
+                
+                {/* Honeypot field for spam protection */}
                 <input
                   type="text"
-                  name="subject"
-                  placeholder="Sujet"
-                  value={formData.subject}
+                  name="botField"
+                  value={formData.botField}
                   onChange={handleChange}
-                  className="input-luxury"
-                  required
+                  className="hidden"
+                  tabIndex={-1}
+                  autoComplete="off"
                 />
-                <textarea
-                  name="message"
-                  placeholder="Votre message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows={6}
-                  className="input-luxury resize-none"
-                  required
-                />
-                <button type="submit" className="btn-gold w-full sm:w-auto">
-                  <Send size={18} className="mr-2" />
-                  Envoyer le Message
+                
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="name" className="text-sm font-medium text-foreground block">
+                      Nom complet <span className="text-gold">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="name"
+                        type="text"
+                        name="name"
+                        placeholder="Votre nom"
+                        value={formData.name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className={`input-luxury ${errors.name ? "border-destructive focus:border-destructive focus:ring-destructive/20" : ""} ${touched.name && !errors.name ? "border-green-500/50" : ""}`}
+                        required
+                        aria-invalid={errors.name ? "true" : "false"}
+                        aria-describedby={errors.name ? "name-error" : undefined}
+                      />
+                      {touched.name && !errors.name && formData.name && (
+                        <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500" size={20} />
+                      )}
+                      {errors.name && (
+                        <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 text-destructive" size={20} />
+                      )}
+                    </div>
+                    {errors.name && (
+                      <p id="name-error" className="text-sm text-destructive flex items-center gap-1">
+                        <AlertCircle size={14} />
+                        {errors.name}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium text-foreground block">
+                      Email <span className="text-gold">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="email"
+                        type="email"
+                        name="email"
+                        placeholder="votre@email.com"
+                        value={formData.email}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className={`input-luxury ${errors.email ? "border-destructive focus:border-destructive focus:ring-destructive/20" : ""} ${touched.email && !errors.email && formData.email ? "border-green-500/50" : ""}`}
+                        required
+                        aria-invalid={errors.email ? "true" : "false"}
+                        aria-describedby={errors.email ? "email-error" : undefined}
+                      />
+                      {touched.email && !errors.email && formData.email && (
+                        <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500" size={20} />
+                      )}
+                      {errors.email && (
+                        <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 text-destructive" size={20} />
+                      )}
+                    </div>
+                    {errors.email && (
+                      <p id="email-error" className="text-sm text-destructive flex items-center gap-1">
+                        <AlertCircle size={14} />
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="subject" className="text-sm font-medium text-foreground block">
+                    Sujet <span className="text-gold">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="subject"
+                      type="text"
+                      name="subject"
+                      placeholder="Objet de votre message"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className={`input-luxury ${errors.subject ? "border-destructive focus:border-destructive focus:ring-destructive/20" : ""} ${touched.subject && !errors.subject && formData.subject ? "border-green-500/50" : ""}`}
+                      required
+                      aria-invalid={errors.subject ? "true" : "false"}
+                      aria-describedby={errors.subject ? "subject-error" : undefined}
+                    />
+                    {touched.subject && !errors.subject && formData.subject && (
+                      <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500" size={20} />
+                    )}
+                    {errors.subject && (
+                      <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 text-destructive" size={20} />
+                    )}
+                  </div>
+                  {errors.subject && (
+                    <p id="subject-error" className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle size={14} />
+                      {errors.subject}
+                    </p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="message" className="text-sm font-medium text-foreground block">
+                    Message <span className="text-gold">*</span>
+                  </label>
+                  <div className="relative">
+                    <textarea
+                      id="message"
+                      name="message"
+                      placeholder="Décrivez votre demande, question ou suggestion..."
+                      value={formData.message}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      rows={6}
+                      className={`input-luxury resize-none ${errors.message ? "border-destructive focus:border-destructive focus:ring-destructive/20" : ""} ${touched.message && !errors.message && formData.message ? "border-green-500/50" : ""}`}
+                      required
+                      aria-invalid={errors.message ? "true" : "false"}
+                      aria-describedby={errors.message ? "message-error" : undefined}
+                    />
+                    {touched.message && !errors.message && formData.message && (
+                      <CheckCircle2 className="absolute right-3 top-3 text-green-500" size={20} />
+                    )}
+                    {errors.message && (
+                      <AlertCircle className="absolute right-3 top-3 text-destructive" size={20} />
+                    )}
+                  </div>
+                  {errors.message && (
+                    <p id="message-error" className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle size={14} />
+                      {errors.message}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    {formData.message.length}/500 caractères minimum
+                  </p>
+                </div>
+                
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="btn-gold w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Envoi en cours...
+                    </>
+                  ) : (
+                    <>
+                      <Send size={18} />
+                      Envoyer le Message
+                    </>
+                  )}
                 </button>
+                
+                <p className="text-xs text-muted-foreground text-center sm:text-left">
+                  En soumettant ce formulaire, vous acceptez que nous traitions vos données personnelles 
+                  conformément à notre politique de confidentialité.
+                </p>
               </form>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* WhatsApp CTA */}
-      <section className="py-16 bg-foreground text-primary-foreground">
-        <div className="container-custom text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">
-              Préférez-vous <span className="gold-text">WhatsApp</span> ?
-            </h2>
-            <p className="text-primary-foreground/70 mb-8 max-w-xl mx-auto">
-              Pour une réponse rapide, contactez-nous directement sur WhatsApp. 
-              Notre équipe vous répondra dans les minutes qui suivent.
-            </p>
-            <a 
-              href="https://wa.me/213542552188"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-medium bg-green-600 text-cream hover:bg-green-700 transition-all"
-            >            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-              </svg>
-              Chatter sur WhatsApp
-            </a>
-          </motion.div>
-        </div>
-      </section>
+
 
       <Footer />
     </main>

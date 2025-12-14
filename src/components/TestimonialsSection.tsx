@@ -41,7 +41,7 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <section ref={ref} className="section-padding bg-foreground text-primary-foreground overflow-hidden">
+    <section ref={ref} className="section-padding bg-secondary/30 text-white overflow-hidden">
       <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -52,7 +52,7 @@ const TestimonialsSection = () => {
           <span className="text-gold tracking-[0.2em] uppercase text-sm font-medium">
             Témoignages
           </span>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mt-2">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mt-2 text-white">
             Ce Que Disent Nos Clients
           </h2>
         </motion.div>
@@ -74,7 +74,7 @@ const TestimonialsSection = () => {
             </div>
 
             {/* Quote */}
-            <blockquote className="font-serif text-xl md:text-2xl lg:text-3xl leading-relaxed mb-8 text-primary-foreground/90">
+            <blockquote className="font-serif text-xl md:text-2xl lg:text-3xl leading-relaxed mb-8 text-white/90">
               "{testimonials[currentIndex].content}"
             </blockquote>
 
@@ -83,7 +83,7 @@ const TestimonialsSection = () => {
               <p className="font-semibold text-lg gold-text">
                 {testimonials[currentIndex].name}
               </p>
-              <p className="text-primary-foreground/60 text-sm">
+              <p className="text-gray-400 text-sm">
                 {testimonials[currentIndex].role}
               </p>
             </div>
@@ -93,7 +93,7 @@ const TestimonialsSection = () => {
           <div className="flex justify-center gap-4 mt-12">
             <button
               onClick={prevTestimonial}
-              className="w-12 h-12 rounded-full border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-foreground transition-all"
+              className="w-12 h-12 rounded-full border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-black transition-all"
               aria-label="Previous testimonial"
             >
               <ChevronLeft size={20} />
@@ -104,7 +104,7 @@ const TestimonialsSection = () => {
                   key={index}
                   onClick={() => setCurrentIndex(index)}
                   className={`w-2 h-2 rounded-full transition-all ${
-                    index === currentIndex ? "bg-gold w-6" : "bg-primary-foreground/30"
+                    index === currentIndex ? "bg-gold w-6" : "bg-white/20"
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
@@ -112,7 +112,7 @@ const TestimonialsSection = () => {
             </div>
             <button
               onClick={nextTestimonial}
-              className="w-12 h-12 rounded-full border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-foreground transition-all"
+              className="w-12 h-12 rounded-full border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-black transition-all"
               aria-label="Next testimonial"
             >
               <ChevronRight size={20} />

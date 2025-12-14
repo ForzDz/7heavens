@@ -90,7 +90,7 @@ const Reservation = () => {
             alt="Intérieur du restaurant"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-foreground/40" />
+          <div className="absolute inset-0 bg-black/60" />
         </div>
         <div className="container-custom relative z-10 text-center px-4">
           <motion.h1
@@ -137,6 +137,7 @@ const Reservation = () => {
                       mode="single"
                       selected={date}
                       onSelect={setDate}
+                      locale={fr}
                       className="rounded-xl border bg-background/50 p-4 w-full flex justify-center"
                       classNames={{
                         head_cell: "text-muted-foreground w-10 font-normal text-[0.8rem]",

@@ -17,7 +17,7 @@ const CTASection = () => {
           alt="Plat signature"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-foreground/70" />
+        <div className="absolute inset-0 bg-black/70" />
       </div>
 
       <div className="container-custom relative z-10">

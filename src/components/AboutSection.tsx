@@ -46,7 +46,7 @@ const AboutSection = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative z-10 space-y-6 p-8 pt-[350px] lg:p-0 lg:pt-0 bg-gradient-to-t from-black via-black/70 to-transparent lg:from-transparent lg:via-transparent lg:bg-none"
+            className="relative z-10 space-y-6 p-6 pt-[240px] lg:p-0 lg:pt-0 bg-gradient-to-t from-black via-black/80 to-transparent lg:from-transparent lg:via-transparent lg:bg-none"
           >
             <span className="hidden lg:block text-gold tracking-[0.2em] uppercase text-sm font-medium">
               Notre Histoire

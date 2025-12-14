@@ -3,7 +3,7 @@ import { Phone, Mail, MapPin, Instagram, Facebook } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-foreground text-primary-foreground">
+    <footer className="bg-neutral-950 text-white">
       <div className="container-custom py-10">
         {/* Main Footer Content - Always Side by Side */}
         <div className="flex flex-row justify-center items-start gap-6 sm:gap-12 max-w-4xl mx-auto">
@@ -15,20 +15,20 @@ const Footer = () => {
             <ul className="space-y-2 sm:space-y-3">
               <li className="flex items-start gap-2">
                 <MapPin size={14} className="text-gold mt-0.5 flex-shrink-0" />
-                <span className="text-xs sm:text-sm text-primary-foreground/70">
+                <span className="text-xs sm:text-sm text-gray-400">
                   Centre-ville, Oran, Algérie
                 </span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={14} className="text-gold flex-shrink-0" />
-                <span className="text-xs sm:text-sm text-primary-foreground/70">
+                <span className="text-xs sm:text-sm text-gray-400">
                   +213 54 25 52 188
                 </span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail size={14} className="text-gold flex-shrink-0" />
-                <span className="text-xs sm:text-sm text-primary-foreground/70">
-                  contact@7heavens.dz
+                <span className="text-xs sm:text-sm text-gray-400">
+                  7.heaven.bistro@gmail.com
                 </span>
               </li>
             </ul>
@@ -74,7 +74,7 @@ const Footer = () => {
           </div>
 
           {/* Vertical Separator Line - Always Visible */}
-          <div className="w-px bg-primary-foreground/10 self-stretch"></div>
+          <div className="w-px bg-white/10 self-stretch"></div>
 
           {/* Navigation - Right */}
           <div className="text-left flex-shrink-0">
@@ -92,7 +92,7 @@ const Footer = () => {
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="text-xs sm:text-sm text-primary-foreground/70 hover:text-gold transition-colors"
+                    className="text-xs sm:text-sm text-gray-400 hover:text-gold transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -103,13 +103,13 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar - Centered */}
-        <div className="mt-8 sm:mt-10 pt-5 sm:pt-6 border-t border-primary-foreground/10 text-center">
-          <p className="text-xs sm:text-sm text-primary-foreground/50 mb-3">
+        <div className="mt-8 sm:mt-10 pt-5 sm:pt-6 border-t border-white/10 text-center">
+          <p className="text-xs sm:text-sm text-gray-500 mb-3">
             © 2026 7Heavens Restaurant. Tous droits réservés.
           </p>
           <div className="flex items-center gap-2 justify-center">
             <span className="w-5 h-1 sm:w-6 sm:h-1 bg-green-600"></span>
-            <span className="w-5 h-1 sm:w-6 sm:h-1 bg-primary-foreground"></span>
+            <span className="w-5 h-1 sm:w-6 sm:h-1 bg-white"></span>
             <span className="w-5 h-1 sm:w-6 sm:h-1 bg-red-600"></span>
           </div>
         </div>
