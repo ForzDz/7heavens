@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, Send, Instagram, Facebook, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
-import emailjs from "@emailjs/browser";
+import { MapPin, Phone, Mail, Clock, MessageCircle, Instagram, Facebook, CheckCircle2, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -16,13 +15,11 @@ interface FormErrors {
 
 const Contact = () => {
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
     message: "",
-    botField: "", // Honeypot field
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -93,13 +90,8 @@ const Contact = () => {
     return isValid;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Honeypot check
-    if (formData.botField) {
-      return; // Silent fail for bots
-    }
 
     if (!validateForm()) {
       toast({
@@ -110,65 +102,32 @@ const Contact = () => {
       return;
     }
 
-    setIsSubmitting(true);
+    // Créer le message formaté pour WhatsApp
+    const whatsappMessage = `*NOUVEAU MESSAGE DE CONTACT - 7 HEAVENS*\n\n` +
+      `*Nom:* ${formData.name}\n` +
+      `*Email:* ${formData.email}\n` +
+      `*Sujet:* ${formData.subject}\n\n` +
+      `--------------------------------\n` +
+      `*MESSAGE:*\n` +
+      `${formData.message}\n` +
+      `--------------------------------\n\n` +
+      `_Message envoyé depuis le site web_`;
 
-    try {
-      // Configuration EmailJS pour envoyer directement à 7.heaven.bistro@gmail.com
-      const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-      const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-      const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    const whatsappNumber = "213542552188";
 
-      if (SERVICE_ID && TEMPLATE_ID && PUBLIC_KEY) {
-        // Envoi via EmailJS directement à l'email du restaurant
-        const templateParams = {
-          from_name: formData.name,
-          from_email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          to_email: "7.heaven.bistro@gmail.com",
-          reply_to: formData.email,
-        };
+    // Ouvrir WhatsApp avec le message pré-rempli
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, "_blank");
 
-        await emailjs.send(
-          SERVICE_ID,
-          TEMPLATE_ID,
-          templateParams,
-          PUBLIC_KEY
-        );
-      } else {
-        // Fallback: Envoi via Netlify Forms (nécessite configuration dans Netlify Dashboard)
-        const myForm = e.target as HTMLFormElement;
-        const formDataToSend = new FormData(myForm);
-        
-        const response = await fetch("/", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams(formDataToSend as any).toString(),
-        });
+    toast({
+      title: "Redirection vers WhatsApp",
+      description: "Veuillez envoyer le message pré-rempli pour nous contacter.",
+    });
 
-        if (!response.ok) {
-          throw new Error("Erreur lors de l'envoi via Netlify");
-        }
-      }
-
-      toast({
-        title: "Message envoyé avec succès !",
-        description: "Nous vous répondrons dans les plus brefs délais (sous 24h).",
-      });
-      
-      setFormData({ name: "", email: "", subject: "", message: "", botField: "" });
-      setErrors({});
-      setTouched({});
-    } catch (error) {
-      toast({
-        title: "Erreur d'envoi",
-        description: "Une erreur est survenue. Veuillez réessayer ou nous contacter directement.",
-        variant: "destructive",
-      });
-      console.error("Form submission error:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Réinitialiser le formulaire
+    setFormData({ name: "", email: "", subject: "", message: "" });
+    setErrors({});
+    setTouched({});
   };
 
   const contactInfo = [
@@ -405,30 +364,19 @@ const Contact = () => {
                 <h2 className="font-serif text-3xl font-bold text-foreground mb-2">
                   Envoyez-nous un Message
                 </h2>
-                <p className="text-muted-foreground">
-                  Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.
+                <p className="text-muted-foreground mb-4">
+                  Remplissez le formulaire ci-dessous et envoyez-nous votre message directement sur WhatsApp.
                 </p>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 p-3 rounded-lg">
+                  <MessageCircle size={18} className="text-[#25D366]" />
+                  <span>Votre message sera envoyé sur WhatsApp au numéro <strong className="text-foreground">+213 54 25 52 188</strong></span>
+                </div>
               </div>
               
               <form 
-                name="contact" 
-                method="POST" 
-                data-netlify="true" 
                 onSubmit={handleSubmit} 
                 className="space-y-6"
               >
-                <input type="hidden" name="form-name" value="contact" />
-                
-                {/* Honeypot field for spam protection */}
-                <input
-                  type="text"
-                  name="botField"
-                  value={formData.botField}
-                  onChange={handleChange}
-                  className="hidden"
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
                 
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -563,31 +511,20 @@ const Contact = () => {
                     </p>
                   )}
                   <p className="text-xs text-muted-foreground">
-                    {formData.message.length}/500 caractères minimum
+                    {formData.message.length} caractères
                   </p>
                 </div>
                 
                 <button 
                   type="submit" 
-                  disabled={isSubmitting}
-                  className="btn-gold w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin" />
-                      Envoi en cours...
-                    </>
-                  ) : (
-                    <>
-                      <Send size={18} />
-                      Envoyer le Message
-                    </>
-                  )}
+                  <MessageCircle size={20} />
+                  Envoyer sur WhatsApp
                 </button>
                 
-                <p className="text-xs text-muted-foreground text-center sm:text-left">
-                  En soumettant ce formulaire, vous acceptez que nous traitions vos données personnelles 
-                  conformément à notre politique de confidentialité.
+                <p className="text-xs text-muted-foreground text-center">
+                  En cliquant sur "Envoyer sur WhatsApp", vous serez redirigé vers WhatsApp avec votre message pré-rempli.
                 </p>
               </form>
             </motion.div>

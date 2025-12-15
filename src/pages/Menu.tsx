@@ -1,11 +1,23 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState, useMemo } from "react";
-import { ChevronRight } from "lucide-react";
+import { useRef, useState, useMemo, useEffect } from "react";
+import { ChevronRight, ChevronUp } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 import interior1 from "@/assets/interior-1.jpeg";
+
+// Import images d'échantillon pour les catégories
+import cotelettesAagneau from "@/assets/cotelettes-agneau.png";
+import pastaPuttanesca from "@/assets/pasta-puttanesca.jpeg";
+import cesarSalad from "@/assets/cesar-salad.png";
+import bruschettaPesto from "@/assets/bruschetta-pesto.png";
+import raviolisPoulet from "@/assets/raviolis-poulet.png";
+import risottoPesto from "@/assets/risotto-pesto-burrata.png";
+import crepesPlaceholder from "@/assets/crepes-placeholder.svg";
+import sandwichPlaceholder from "@/assets/sandwich-placeholder.svg";
+import boissonsPlaceholder from "@/assets/boissons-placeholder.svg";
+import boissonsFraichesPlaceholder from "@/assets/boissons-fraiches-placeholder.svg";
 
 
 interface MenuItem {
@@ -13,6 +25,21 @@ interface MenuItem {
   description?: string;
   price: string;
 }
+
+// Mapping des images d'échantillon pour chaque catégorie (une seule image par catégorie)
+const categoryImages: Record<string, string> = {
+  "Plats": cotelettesAagneau,
+  "Pâtes": pastaPuttanesca,
+  "Entrées": cesarSalad,
+  "Bruschetta": bruschettaPesto,
+  "Raviolis": raviolisPoulet,
+  "Risotto": risottoPesto,
+  "Sandwich": sandwichPlaceholder,
+  "Burger": sandwichPlaceholder, // Utiliser sandwich comme placeholder
+  "Crêpes": crepesPlaceholder,
+  "Boissons Chaudes": boissonsPlaceholder,
+  "Boissons Fraîches": boissonsFraichesPlaceholder,
+};
 
 interface MenuCategory {
   title: string;
@@ -106,7 +133,7 @@ const menuData: MenuCategory[] = [
   {
     title: "Sandwich",
     icon: "🥪",
-    displayMode: "list",
+    displayMode: "cards",
     items: [
       { name: "Philly cheese steak", price: "1000 DA" },
       { name: "Steak au cheddar BBQ", price: "1300 DA" },
@@ -132,7 +159,7 @@ const menuData: MenuCategory[] = [
   {
     title: "Crêpes",
     icon: "🥞",
-    displayMode: "list",
+    displayMode: "cards",
     items: [
       { name: "Classique (chocolat, nutella, chantilly)", price: "550 DA" },
       { name: "La Banana (chocolat, nutella, banane, chantilly)", price: "650 DA" },
@@ -145,7 +172,7 @@ const menuData: MenuCategory[] = [
   {
     title: "Boissons Chaudes",
     icon: "☕",
-    displayMode: "list",
+    displayMode: "cards",
     items: [],
     subcategories: [
       {
@@ -177,7 +204,7 @@ const menuData: MenuCategory[] = [
   {
     title: "Boissons Fraîches",
     icon: "🍹",
-    displayMode: "list",
+    displayMode: "cards",
     items: [],
     subcategories: [
       {
@@ -255,30 +282,27 @@ const MenuItemCard = ({ item, index }: { item: MenuItem; index: number }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.4, delay: index * 0.05 }}
-      className="group relative bg-white/5 backdrop-blur-md p-6 sm:p-8 rounded-2xl border border-white/10 hover:border-gold/50 transition-all duration-500 hover:bg-white/10 flex flex-col justify-between overflow-hidden hover:shadow-lg hover:shadow-gold/5"
+      className="group relative bg-neutral-900/60 backdrop-blur-sm p-5 sm:p-6 rounded-xl border border-white/5 hover:border-gold/30 transition-all duration-300 hover:bg-neutral-900/80 hover:shadow-lg hover:shadow-gold/10"
     >
-        {/* Decorative corner */}
-        <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
-        <div className="relative z-10">
-            <div className="flex justify-between items-start gap-4 mb-2">
-                <h3 className="font-serif text-xl sm:text-2xl font-bold text-white group-hover:text-gold transition-colors duration-300">
-                {item.name}
-                </h3>
-                <span className="shrink-0 text-xl sm:text-2xl font-serif font-bold text-[#D4AF37] drop-shadow-sm">
-                {item.price}
-                </span>
-            </div>
-            
-            {/* Elegant separator */}
-            <div className="w-8 h-0.5 bg-gold/30 mb-4 group-hover:w-full group-hover:bg-gold/50 transition-all duration-700 ease-out" />
-            
-            {item.description && (
-                <p className="text-gray-300 text-sm sm:text-base leading-relaxed font-light tracking-wide">
-                    {item.description}
-                </p>
-            )}
-        </div>
+      {/* Header: Name and Price */}
+      <div className="flex justify-between items-start gap-3 mb-3">
+        <h3 className="font-serif text-lg sm:text-xl font-bold text-white group-hover:text-gold transition-colors duration-300 flex-1 min-w-0">
+          {item.name}
+        </h3>
+        <span className="shrink-0 text-lg sm:text-xl font-serif font-bold text-gold whitespace-nowrap ml-2">
+          {item.price}
+        </span>
+      </div>
+      
+      {/* Elegant gold separator line */}
+      <div className="h-px bg-gradient-to-r from-gold/60 via-gold/40 to-transparent mb-4" />
+      
+      {/* Description */}
+      {item.description && (
+        <p className="text-gray-400 text-sm sm:text-base leading-relaxed font-light">
+          {item.description}
+        </p>
+      )}
     </motion.div>
   );
 };
@@ -314,36 +338,61 @@ const CategoryButton = ({
   category: { title: string; icon: string }; 
   isActive: boolean; 
   onClick: () => void;
-}) => (
-  <motion.button
-    whileHover={{ scale: 1.05, y: -2 }}
-    whileTap={{ scale: 0.95 }}
-    onClick={onClick}
-    className={`
-      flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-medium text-xs sm:text-sm transition-all duration-300 whitespace-nowrap flex-shrink-0
-      ${isActive 
-        ? 'bg-gold text-black shadow-lg shadow-gold/40 border-2 border-gold' 
-        : 'bg-neutral-900/80 backdrop-blur-sm border-2 border-white/10 text-white hover:border-gold/50 hover:bg-gold/10 hover:shadow-md'
-      }
-    `}
-  >
-    <span className="text-base sm:text-lg">{category.icon}</span>
-    <span className="font-semibold">{category.title}</span>
-  </motion.button>
-);
+}) => {
+  const isBoissons = category.title === "Boissons Chaudes" || category.title === "Boissons Fraîches";
+  const boissonsParts = isBoissons ? category.title.split(" ") : null;
+  
+  return (
+    <motion.button
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className={`
+        flex flex-col items-center justify-center gap-0.5 px-3 sm:px-4 lg:px-5 py-2.5 rounded-full font-medium text-xs sm:text-sm lg:text-sm transition-all duration-300 w-full h-full min-h-[44px] sm:min-h-[48px]
+        ${isActive 
+          ? 'bg-gold text-black shadow-lg shadow-gold/40 border-2 border-gold' 
+          : 'bg-neutral-900/80 backdrop-blur-sm border-2 border-white/10 text-white hover:border-gold/50 hover:bg-gold/10 hover:shadow-md'
+        }
+      `}
+    >
+      <span className="text-sm sm:text-base lg:text-lg flex-shrink-0">{category.icon}</span>
+      {isBoissons && boissonsParts ? (
+        <div className="flex flex-col items-center">
+          <span className="font-semibold text-center leading-tight">{boissonsParts[0]}</span>
+          <span className="font-semibold text-center leading-tight">{boissonsParts[1]}</span>
+        </div>
+      ) : (
+        <span className="font-semibold text-center leading-tight">{category.title}</span>
+      )}
+    </motion.button>
+  );
+};
 
 const Menu = () => {
-  const [activeCategory, setActiveCategory] = useState<string>("Tous");
+  const [activeCategory, setActiveCategory] = useState<string>(menuData[0]?.title || "");
+  const [showScrollTop, setShowScrollTop] = useState(false);
   
-  const categories = useMemo(() => [
-    { title: "Tous", icon: "✨" },
-    ...menuData.map(cat => ({ title: cat.title, icon: cat.icon }))
-  ], []);
+  const categories = useMemo(() => 
+    menuData.map(cat => ({ title: cat.title, icon: cat.icon }))
+  , []);
 
   const filteredMenu = useMemo(() => {
-    if (activeCategory === "Tous") return menuData;
     return menuData.filter(cat => cat.title === activeCategory);
   }, [activeCategory]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 200);
+    };
+    // Vérifier immédiatement au chargement
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <main className="min-h-screen bg-neutral-950 overflow-x-hidden">
@@ -389,18 +438,13 @@ const Menu = () => {
       </section>
 
       {/* Category Filter Buttons */}
-      <section className="sticky top-16 z-30 bg-neutral-950/95 backdrop-blur-xl border-b border-white/5 py-3 shadow-sm overflow-hidden">
-        <div className="w-full relative">
+      <section className="sticky top-16 z-30 bg-neutral-950/95 backdrop-blur-xl border-b border-white/5 py-3 sm:py-3 shadow-sm">
+        <div className="container-custom px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="flex gap-2 overflow-x-auto pb-2 px-4 sm:px-6 lg:px-8 scrollbar-hide"
-            style={{ 
-              scrollbarWidth: 'none', 
-              msOverflowStyle: 'none',
-              WebkitOverflowScrolling: 'touch'
-            }}
+            className="grid grid-cols-3 sm:grid-cols-4 lg:flex lg:flex-wrap gap-2.5 sm:gap-3 lg:gap-3 items-stretch"
           >
             {categories.map((cat) => (
               <CategoryButton
@@ -410,25 +454,6 @@ const Menu = () => {
                 onClick={() => setActiveCategory(cat.title)}
               />
             ))}
-          </motion.div>
-          
-          {/* Premium Scroll Indicator - Mobile Only */}
-          <div className="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-black to-transparent pointer-events-none sm:hidden z-10" />
-          
-          <motion.div
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1, duration: 0.5 }}
-            className="absolute right-3 top-[65%] -translate-y-1/2 z-20 pointer-events-none sm:hidden"
-          >
-            <motion.div 
-              animate={{ x: [0, 5, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md border border-gold/50 px-3 py-1.5 rounded-full shadow-2xl shadow-black/50"
-            >
-              <span className="text-[10px] uppercase tracking-widest font-bold text-gold">Glissez</span>
-              <ChevronRight size={12} className="text-gold" />
-            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -467,10 +492,55 @@ const Menu = () => {
                     )}
                   </motion.div>
 
+                  {/* Image d'échantillon de la catégorie */}
+                  {categoryImages[category.title] && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6 }}
+                      className="mb-8 sm:mb-12 rounded-2xl overflow-hidden shadow-2xl"
+                    >
+                      <div className="relative w-full h-64 sm:h-80 md:h-96 overflow-hidden">
+                        <img
+                          src={categoryImages[category.title]}
+                          alt={category.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                      </div>
+                    </motion.div>
+                  )}
+
                   {category.displayMode === "cards" ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-                      {category.items.map((item, index) => (
-                        <MenuItemCard key={item.name} item={item} index={index} />
+                    <div className="space-y-4 sm:space-y-6">
+                      {category.items.length > 0 && (
+                        <div className="flex flex-col gap-3 sm:gap-4">
+                          {category.items.map((item, index) => (
+                            <MenuItemCard 
+                              key={item.name} 
+                              item={item} 
+                              index={index} 
+                            />
+                          ))}
+                        </div>
+                      )}
+                      {category.subcategories && category.subcategories.map((sub, subIndex) => (
+                        <div key={sub.title} className="space-y-4 sm:space-y-6">
+                          <h3 className="font-serif text-xl sm:text-2xl font-semibold text-white mb-4 sm:mb-6 flex items-center gap-3">
+                            <div className="w-2 h-2 rounded-full gold-gradient" />
+                            {sub.title}
+                          </h3>
+                          <div className="flex flex-col gap-3 sm:gap-4">
+                            {sub.items.map((item, index) => (
+                              <MenuItemCard 
+                                key={item.name} 
+                                item={item} 
+                                index={subIndex * 100 + index} 
+                              />
+                            ))}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   ) : (
@@ -499,6 +569,26 @@ const Menu = () => {
 
 
       <Footer />
+
+      {/* Scroll to Top Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            whileHover={{ scale: 1.1, y: -2 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToTop}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            className="fixed bottom-6 left-6 z-[100] flex flex-col items-center justify-center w-14 h-14 bg-gold text-black rounded-full shadow-2xl hover:shadow-gold/50 transition-all duration-300 group border-2 border-gold/20"
+            aria-label="Retour en haut"
+          >
+            <ChevronUp size={20} className="group-hover:translate-y-[-2px] transition-transform duration-300 mb-0.5" strokeWidth={2.5} />
+            <span className="text-[9px] font-bold uppercase tracking-wider">Menu</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
     </main>
   );
 };

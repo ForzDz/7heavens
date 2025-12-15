@@ -252,3 +252,4 @@ Si vous rencontrez des problèmes :
 ---
 
 **Félicitations !** 🎉 Votre formulaire est maintenant configuré pour envoyer les emails directement à **7.heaven.bistro@gmail.com** !
+

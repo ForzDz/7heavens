@@ -96,3 +96,4 @@ Si vous rencontrez des problèmes :
 2. Vérifiez la console du navigateur pour les erreurs
 3. Vérifiez que votre compte EmailJS est actif
 4. Assurez-vous que le service email est bien connecté
+

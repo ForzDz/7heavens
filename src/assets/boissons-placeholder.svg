@@ -1,0 +1,30 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d1810;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a0f0a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="drink1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b4513;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#654321;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="drink2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffa500;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <!-- Coffee cup -->
+  <ellipse cx="300" cy="350" rx="60" ry="20" fill="#654321"/>
+  <rect x="240" y="200" width="120" height="150" rx="15" fill="url(#drink1)"/>
+  <ellipse cx="300" cy="200" rx="60" ry="15" fill="#8b4513"/>
+  <circle cx="300" cy="180" r="8" fill="#ffffff" opacity="0.3"/>
+  <!-- Juice glass -->
+  <ellipse cx="500" cy="360" rx="50" ry="18" fill="#654321"/>
+  <rect x="450" y="180" width="100" height="180" rx="10" fill="url(#drink2)"/>
+  <ellipse cx="500" cy="180" rx="50" ry="12" fill="#ffd700"/>
+  <circle cx="500" cy="160" r="6" fill="#ffffff" opacity="0.4"/>
+  <text x="400" y="480" font-family="Arial, sans-serif" font-size="48" fill="#d4af37" text-anchor="middle" font-weight="bold">Boissons</text>
+</svg>
+
+
