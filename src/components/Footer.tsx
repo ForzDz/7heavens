@@ -46,7 +46,7 @@ const Footer = () => {
                 <Instagram size={14} />
               </a>
               <a
-                href="https://www.facebook.com/7heavens.restaurant"
+                href="https://www.facebook.com/profile.php?id=61558946881607"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-foreground transition-all"

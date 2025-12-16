@@ -173,7 +173,7 @@
   }
 
   .input-luxury {
-    @apply w-full px-4 sm:px-5 py-3 sm:py-4 rounded-xl bg-secondary border border-border focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-300 outline-none text-sm sm:text-base;
+    @apply w-full px-4 sm:px-5 py-3 sm:py-4 rounded-xl bg-secondary border border-border focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-300 outline-none text-base;
   }
 
   .link-underline {

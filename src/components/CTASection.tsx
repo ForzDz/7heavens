@@ -42,8 +42,8 @@ const CTASection = () => {
             <Link to="/reservation" className="btn-gold">
               Réserver une Table
             </Link>
-            <Link to="/menu" className="btn-outline-gold">
-              Voir le Menu
+            <Link to="/contact" className="btn-outline-gold">
+              Nous Contacter
             </Link>
           </div>
         </motion.div>

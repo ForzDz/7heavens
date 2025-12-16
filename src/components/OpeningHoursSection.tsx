@@ -62,7 +62,7 @@ const OpeningHoursSection = () => {
                       {item.day}
                     </span>
                     <div className="flex-grow mx-4 mb-1 border-b border-dotted border-foreground/20 hidden sm:block"></div>
-                    <span className="font-mono text-sm text-foreground/80">
+                    <span className="font-serif text-base text-foreground/90 tracking-wide">
                       {item.time}
                     </span>
                   </div>

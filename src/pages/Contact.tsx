@@ -277,7 +277,7 @@ const Contact = () => {
                 <Instagram size={32} />
               </a>
               <a
-                href="https://www.facebook.com/7heavens.restaurant"
+                href="https://www.facebook.com/profile.php?id=61558946881607"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-16 h-16 rounded-full border-2 border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-foreground transition-all duration-300 hover:scale-110 shadow-lg"

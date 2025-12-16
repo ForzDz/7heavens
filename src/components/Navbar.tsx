@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Instagram, Facebook } from "lucide-react";
 import logo from "@/assets/logo.webp";
 
 const navLinks = [
@@ -122,26 +122,31 @@ const Navbar = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-background pt-24"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl flex flex-col justify-center items-center"
           >
-            <ul className="flex flex-col items-center gap-6 pt-8">
+            {/* Background Decoration */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gold/10 blur-[100px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gold/5 blur-[100px] rounded-full pointer-events-none" />
+
+            <ul className="flex flex-col items-center gap-8 relative z-10 w-full px-6">
               {navLinks.map((link, index) => (
                 <motion.li
                   key={link.path}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ delay: 0.1 + index * 0.1, duration: 0.5, ease: "easeOut" }}
                 >
                   <Link
                     to={link.path}
-                    className={`text-xl font-serif font-medium ${
+                    className={`text-3xl sm:text-4xl font-serif font-medium tracking-wide transition-all duration-300 ${
                       location.pathname === link.path
-                        ? "gold-text"
-                        : "text-foreground hover:text-gold"
+                        ? "gold-text scale-105"
+                        : "text-white/80 hover:text-white hover:scale-105"
                     }`}
                   >
                     {link.name}
@@ -149,6 +154,31 @@ const Navbar = () => {
                 </motion.li>
               ))}
             </ul>
+
+            {/* Mobile Menu Footer */}
+            <motion.div 
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ delay: 0.6, duration: 0.8 }}
+               className="absolute bottom-10 left-0 right-0 flex flex-col items-center gap-6"
+            >
+                <div className="w-12 h-[1px] bg-white/10"></div>
+                
+                <div className="flex gap-6">
+                  <a href="https://www.instagram.com/7_heavens_restaurant/" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-gold transition-colors">
+                    <Instagram size={24} />
+                  </a>
+                  <a href="https://www.facebook.com/profile.php?id=61558946881607" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-gold transition-colors">
+                    <Facebook size={24} />
+                  </a>
+                  <a href="https://www.tiktok.com/@7.heavens.restaur?lang=fr" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-gold transition-colors">
+                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                     </svg>
+                  </a>
+                </div>
+            </motion.div>
+
           </motion.div>
         )}
       </AnimatePresence>
