@@ -30,7 +30,7 @@ import burger from "@/assets/burger.webp";
 import boissonsChaudes from "@/assets/boisson-chaudes.webp";
 import boissonsFraiches from "@/assets/boissons-fraiches.webp";
 import sandwich from "@/assets/sandwich.webp";
-import pouletPanneChampignons from "@/assets/poulet-panne-champignons.webp";
+import risottoPestoBurrata from "@/assets/risotto-pesto-burrata.webp";
 
 interface MenuItem {
   name: string;
@@ -38,19 +38,17 @@ interface MenuItem {
   price: string;
 }
 
-// Mapping des images d'échantillon pour chaque catégorie
-// Assignation temporaire séquentielle (food1 -> food12)
 const categoryImages: Record<string, string> = {
-  "Entrées": stracciatella, // Changé selon demande client
+  "Entrées": stracciatella,
   "Salades": food2,
-  "Bruschetta": image11, // Changé selon demande client (11.webp)
+  "Bruschetta": image11,
   "Pâtes": image12,
-  "Raviolis": raviolisBeef, // Changé selon demande client
-  "Risotto": pouletPanneChampignons, // Changé selon demande client (poulet-panne-champignons.webp)
+  "Raviolis": raviolisBeef,
+  "Risotto": risottoPestoBurrata, // Changed to risotto-pesto-burrata
   "Plats": cotelettesAagneau,
   "Wok": food8,
-  "Sandwich": sandwich, // Changé selon demande client (sandwich.webp)
-  "Burger": burger, // Changé selon demande client
+  "Sandwich": sandwich,
+  "Burger": burger,
   "Boissons Chaudes": boissonsChaudes,
   "Boissons Fraîches": boissonsFraiches,
 };
