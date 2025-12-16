@@ -117,7 +117,8 @@ const Contact = () => {
     const whatsappNumber = "213542552188";
 
     // Ouvrir WhatsApp avec le message pré-rempli
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, "_blank");
+    // Use window.location.href for better mobile compatibility
+    window.location.href = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
 
     toast({
       title: "Redirection vers WhatsApp",

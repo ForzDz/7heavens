@@ -72,7 +72,8 @@ const Reservation = () => {
     const encodedMessage = encodeURIComponent(rawMessage);
 
     // WhatsApp number: 213542552188
-    window.open(`https://wa.me/213542552188?text=${encodedMessage}`, "_blank");
+    // Use window.location.href instead of window.open for better compatibility with in-app browsers (TikTok, Instagram)
+    window.location.href = `https://api.whatsapp.com/send?phone=213542552188&text=${encodedMessage}`;
 
     toast({
         title: "Redirection vers WhatsApp",
