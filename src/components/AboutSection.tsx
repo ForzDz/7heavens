@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import dishesVariety from "@/assets/dishes-variety.jpeg";
+import dishesVariety from "@/assets/dishes-variety.webp";
 
 const AboutSection = () => {
   const ref = useRef(null);

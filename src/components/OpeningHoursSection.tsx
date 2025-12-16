@@ -13,7 +13,7 @@ const OpeningHoursSection = () => {
     { day: "MARDI", time: "12h00 - 23h00" },
     { day: "MERCREDI", time: "12h00 - 23h00" },
     { day: "JEUDI", time: "12h00 - 23h00" },
-    { day: "VENDREDI", time: "12h00 - 23h00" },
+    { day: "VENDREDI", time: "18h00 - 23h00" },
     { day: "SAMEDI", time: "12h00 - 23h00" },
     { day: "DIMANCHE", time: "12h00 - 23h00" },
   ];

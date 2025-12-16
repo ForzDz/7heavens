@@ -3,21 +3,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import interior2 from "@/assets/interior-2.jpeg";
+import interior2 from "@/assets/interior-2.webp";
 
 const Galerie = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [visibleInteriorCount, setVisibleInteriorCount] = useState(4);
-  const [visibleDishesCount, setVisibleDishesCount] = useState(8);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'interior' | 'dishes'>('all');
+  const [visibleCount, setVisibleCount] = useState(12);
 
   // Dynamically load all images from assets
-  const { interiorImages, dishesImages } = useMemo(() => {
+  const { allImages, interiorImages, dishesImages } = useMemo(() => {
     const modules = import.meta.glob('@/assets/*.{jpeg,jpg,png,webp}', { eager: true });
     
-    const allImages = Object.entries(modules)
-      .filter(([path]) => !path.includes("logo") && !path.includes("reservation")) // Exclude logo and reservation
+    const processedImages = Object.entries(modules)
+      .filter(([path]) => !path.includes("logo") && !path.includes("reservation"))
       .map(([path, module]: [string, any]) => {
-         // Extract simple name for alt text
          const name = path.split('/').pop()?.split('.')[0] || "Galerie";
          return {
             src: module.default,
@@ -29,14 +28,40 @@ const Galerie = () => {
          };
       });
 
-    const interior = allImages.filter(img => img.isInterior);
-    const dishes = allImages.filter(img => !img.isInterior);
-
     return {
-      interiorImages: interior,
-      dishesImages: dishes
+      allImages: processedImages,
+      interiorImages: processedImages.filter(img => img.isInterior),
+      dishesImages: processedImages.filter(img => !img.isInterior)
     };
   }, []);
+
+  const displayedImages = useMemo(() => {
+    switch(activeFilter) {
+      case 'interior': return interiorImages;
+      case 'dishes': return dishesImages;
+      default: 
+        // Pour "Tout Voir", mettre en priorité les images "food1" à "food13"
+        const priorityImages = allImages.filter(img => img.src.includes('food'));
+        const otherImages = allImages.filter(img => !img.src.includes('food'));
+        
+        // Mélanger les autres images pour la variété, mais garder les food en premier
+        const shuffledOthers = [...otherImages].sort(() => Math.random() - 0.5);
+        
+        // Trier les images food par ordre numérique (food1, food2, ...)
+        const sortedPriority = priorityImages.sort((a, b) => {
+           const numA = parseInt(a.src.match(/food(\d+)/)?.[1] || "0");
+           const numB = parseInt(b.src.match(/food(\d+)/)?.[1] || "0");
+           return numA - numB;
+        });
+
+        return [...sortedPriority, ...shuffledOthers];
+    }
+  }, [activeFilter, allImages, interiorImages, dishesImages]);
+
+  const handleFilterChange = (filter: 'all' | 'interior' | 'dishes') => {
+    setActiveFilter(filter);
+    setVisibleCount(12); // Reset visible count on filter change
+  };
 
   return (
     <main className="min-h-screen bg-background">
@@ -81,167 +106,89 @@ const Galerie = () => {
         </div>
       </section>
 
-      {/* Interior Section */}
-      {interiorImages.length > 0 && (
-        <section className="section-padding border-b border-border">
-          <div className="container-custom max-w-6xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <span className="text-gold tracking-[0.2em] uppercase text-sm font-medium mb-2 block">
-                Ambiance
-              </span>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
-                Notre Restaurant
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Découvrez l'atmosphère chaleureuse et élégante de 7 Heavens
-              </p>
-            </motion.div>
+      {/* Main Gallery Section */}
+      <section className="section-padding">
+        <div className="container-custom max-w-6xl">
+          
+          {/* Filter Buttons */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-wrap justify-center gap-4 mb-12"
+          >
+            {[
+              { id: 'all', label: 'Tout Voir' },
+              { id: 'interior', label: 'Ambiance' },
+              { id: 'dishes', label: 'Plats' }
+            ].map((filter) => (
+              <button
+                key={filter.id}
+                onClick={() => handleFilterChange(filter.id as any)}
+                className={`px-6 py-2 rounded-full border transition-all duration-300 font-medium ${
+                  activeFilter === filter.id 
+                    ? "bg-gold border-gold text-black" 
+                    : "bg-transparent border-white/20 text-white hover:border-gold/50 hover:text-gold"
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </motion.div>
 
-            <motion.div
-              layout
-              className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
-            >
-              <AnimatePresence mode="popLayout">
-                {interiorImages.slice(0, visibleInteriorCount).map((image, index) => (
-                  <motion.div
-                    key={`interior-${image.src}-${index}`}
-                    layout
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    transition={{ 
-                      duration: 0.6, 
-                      delay: (index % 4) * 0.1,
-                      ease: [0.25, 0.1, 0.25, 1]
-                    }}
-                    className="relative overflow-hidden rounded-2xl cursor-pointer group shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 transition-all duration-500"
-                    onClick={() => setSelectedImage(image.src)}
-                  >
-                    <div className="aspect-[4/3] md:aspect-[3/2]">
-                      <img
-                        src={image.src}
-                        alt={image.alt}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                        <motion.p 
-                          initial={{ y: 10, opacity: 0 }}
-                          whileHover={{ y: 0, opacity: 1 }}
-                          className="text-cream font-serif text-xl md:text-2xl capitalize tracking-wide"
-                        >
-                          {image.alt.replace("Photo ", "")}
-                        </motion.p>
-                      </div>
-                    </div>
-                    <div className="absolute inset-0 border-2 border-gold/0 group-hover:border-gold/30 transition-all duration-500 rounded-2xl" />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-
-            {visibleInteriorCount < interiorImages.length && (
-              <div className="flex justify-center mt-12">
-                <button 
-                  onClick={() => setVisibleInteriorCount(interiorImages.length)}
-                  className="btn-gold px-8 py-3 text-lg"
+          {/* Image Grid */}
+          <motion.div
+            layout
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+          >
+            <AnimatePresence mode="popLayout">
+              {displayedImages.slice(0, visibleCount).map((image, index) => (
+                <motion.div
+                  key={`${image.src}-${index}`}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative overflow-hidden rounded-2xl cursor-pointer group shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 aspect-[4/3]"
+                  onClick={() => setSelectedImage(image.src)}
                 >
-                  Voir plus de photos
-                </button>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <p className="text-white font-serif text-lg capitalize">
+                      {image.alt.replace("Photo ", "")}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
 
-      {/* Dishes Section */}
-      {dishesImages.length > 0 && (
-        <section className="section-padding">
-          <div className="container-custom max-w-6xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
+          {/* Load More Button */}
+          {visibleCount < displayedImages.length && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex justify-center mt-12"
             >
-              <span className="text-gold tracking-[0.2em] uppercase text-sm font-medium mb-2 block">
-                Nos Créations
-              </span>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
-                Nos Plats
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Une sélection de nos spécialités culinaires préparées avec passion
-              </p>
+              <button 
+                onClick={() => setVisibleCount(prev => prev + 12)}
+                className="btn-gold px-8 py-3 text-lg"
+              >
+                Charger plus
+              </button>
             </motion.div>
+          )}
 
-            <motion.div
-              layout
-              className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
-            >
-              <AnimatePresence mode="popLayout">
-                {dishesImages.slice(0, visibleDishesCount).map((image, index) => (
-                  <motion.div
-                    key={`dish-${image.src}-${index}`}
-                    layout
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    transition={{ 
-                      duration: 0.6, 
-                      delay: (index % 4) * 0.1,
-                      ease: [0.25, 0.1, 0.25, 1]
-                    }}
-                    className="relative overflow-hidden rounded-2xl cursor-pointer group shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 transition-all duration-500"
-                    onClick={() => setSelectedImage(image.src)}
-                  >
-                    <div className="aspect-[4/3] md:aspect-[3/2]">
-                      <img
-                        src={image.src}
-                        alt={image.alt}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                        <motion.p 
-                          initial={{ y: 10, opacity: 0 }}
-                          whileHover={{ y: 0, opacity: 1 }}
-                          className="text-cream font-serif text-xl md:text-2xl capitalize tracking-wide"
-                        >
-                          {image.alt.replace("Photo ", "")}
-                        </motion.p>
-                      </div>
-                    </div>
-                    <div className="absolute inset-0 border-2 border-gold/0 group-hover:border-gold/30 transition-all duration-500 rounded-2xl" />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-
-            {visibleDishesCount < dishesImages.length && (
-              <div className="flex justify-center mt-12">
-                <button 
-                  onClick={() => setVisibleDishesCount(dishesImages.length)}
-                  className="btn-gold px-8 py-3 text-lg"
-                >
-                  Voir plus de plats
-                </button>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* Lightbox */}
       <AnimatePresence>

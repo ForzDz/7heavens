@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Calendar } from "@/components/ui/calendar";
-import interior4 from "@/assets/interior-4.jpeg";
+import interior4 from "@/assets/interior-4.webp";
 
 const Reservation = () => {
   const { toast } = useToast();
@@ -22,8 +22,10 @@ const Reservation = () => {
   });
 
   const timeSlots = [
-    "12:00", "12:30", "13:00", "13:30", "14:00",
-    "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"
+    "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+    "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
+    "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
+    "21:00", "21:30", "22:00", "22:30", "23:00"
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -252,7 +254,7 @@ const Reservation = () => {
                   
                   {/* Call Button */}
                   <a 
-                    href="tel:0556482798" 
+                    href="tel:+213542552188" 
                     className="w-full flex items-center justify-center gap-2 mt-3 py-3 rounded-md border-2 border-primary text-primary hover:bg-primary/5 transition-colors font-medium text-lg"
                   >
                     <Phone size={20} />

@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import reservationBg from "@/assets/reservation.jpeg";
+import reservationBg from "@/assets/reservation.webp";
 
 const CTASection = () => {
   const ref = useRef(null);

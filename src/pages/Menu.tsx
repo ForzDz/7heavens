@@ -1,24 +1,36 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState, useMemo, useEffect } from "react";
-import { ChevronRight, ChevronUp } from "lucide-react";
+import { ChevronRight, X } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ItalianFlagBar from "@/components/ItalianFlagBar";
 
-import interior1 from "@/assets/interior-1.jpeg";
+import interior1 from "@/assets/interior-1.webp";
 
-// Import images d'échantillon pour les catégories
-import cotelettesAagneau from "@/assets/cotelettes-agneau.png";
-import pastaPuttanesca from "@/assets/pasta-puttanesca.jpeg";
-import cesarSalad from "@/assets/cesar-salad.png";
-import bruschettaPesto from "@/assets/bruschetta-pesto.png";
-import raviolisPoulet from "@/assets/raviolis-poulet.png";
-import risottoPesto from "@/assets/risotto-pesto-burrata.png";
-import crepesPlaceholder from "@/assets/crepes-placeholder.svg";
-import sandwichPlaceholder from "@/assets/sandwich-placeholder.svg";
-import boissonsPlaceholder from "@/assets/boissons-placeholder.svg";
-import boissonsFraichesPlaceholder from "@/assets/boissons-fraiches-placeholder.svg";
-
+// Import new food images for categories
+import food1 from "@/assets/food1.webp";
+import food2 from "@/assets/food2.webp";
+import food3 from "@/assets/food3.webp";
+import food4 from "@/assets/food4.webp";
+import food5 from "@/assets/food5.webp";
+import food6 from "@/assets/food6.webp";
+import food7 from "@/assets/food7.webp";
+import food8 from "@/assets/food8.webp";
+import food9 from "@/assets/food9.webp";
+import food10 from "@/assets/food10.webp";
+import food11 from "@/assets/food11.webp";
+import food12 from "@/assets/food12.webp";
+import cotelettesAagneau from "@/assets/cotelettes-agneau.webp";
+import image12 from "@/assets/12.webp";
+import stracciatella from "@/assets/stracciatella.webp";
+import image11 from "@/assets/11.webp";
+import raviolisBeef from "@/assets/raviolis-beef.webp";
+import burger from "@/assets/burger.webp";
+import boissonsChaudes from "@/assets/boisson-chaudes.webp";
+import boissonsFraiches from "@/assets/boissons-fraiches.webp";
+import sandwich from "@/assets/sandwich.webp";
+import pouletPanneChampignons from "@/assets/poulet-panne-champignons.webp";
 
 interface MenuItem {
   name: string;
@@ -26,19 +38,21 @@ interface MenuItem {
   price: string;
 }
 
-// Mapping des images d'échantillon pour chaque catégorie (une seule image par catégorie)
+// Mapping des images d'échantillon pour chaque catégorie
+// Assignation temporaire séquentielle (food1 -> food12)
 const categoryImages: Record<string, string> = {
+  "Entrées": stracciatella, // Changé selon demande client
+  "Salades": food2,
+  "Bruschetta": image11, // Changé selon demande client (11.webp)
+  "Pâtes": image12,
+  "Raviolis": raviolisBeef, // Changé selon demande client
+  "Risotto": pouletPanneChampignons, // Changé selon demande client (poulet-panne-champignons.webp)
   "Plats": cotelettesAagneau,
-  "Pâtes": pastaPuttanesca,
-  "Entrées": cesarSalad,
-  "Bruschetta": bruschettaPesto,
-  "Raviolis": raviolisPoulet,
-  "Risotto": risottoPesto,
-  "Sandwich": sandwichPlaceholder,
-  "Burger": sandwichPlaceholder, // Utiliser sandwich comme placeholder
-  "Crêpes": crepesPlaceholder,
-  "Boissons Chaudes": boissonsPlaceholder,
-  "Boissons Fraîches": boissonsFraichesPlaceholder,
+  "Wok": food8,
+  "Sandwich": sandwich, // Changé selon demande client (sandwich.webp)
+  "Burger": burger, // Changé selon demande client
+  "Boissons Chaudes": boissonsChaudes,
+  "Boissons Fraîches": boissonsFraiches,
 };
 
 interface MenuCategory {
@@ -58,6 +72,7 @@ const menuData: MenuCategory[] = [
       { name: "Filet de bœuf", description: "Filet de bœuf tendre, cuisson au choix", price: "3500 DA" },
       { name: "Lamb chops", description: "Côtelettes d'agneau, mashed potatoes", price: "2800 DA" },
       { name: "Entrecôte", description: "Entrecôte grillée, cuisson au choix", price: "3200 DA" },
+      { name: "Pavé de saumon", description: "Pavé de saumon grillé, sauce citronnée", price: "4800 DA" },
       { name: "Piccata", description: "Poulet, câpres, citron, persil", price: "1500 DA" },
       { name: "Panne", description: "Poulet, sauce champignons, tagliatelles, citron", price: "1600 DA" },
       { name: "Suprême de poulet à la crème", description: "Poulet, sauce champignons", price: "1800 DA" },
@@ -154,19 +169,6 @@ const menuData: MenuCategory[] = [
       { name: "La présidentiel", price: "1400 DA" },
       { name: "The Canadian", price: "900 DA" },
       { name: "Burger Heavens", price: "1600 DA" },
-    ],
-  },
-  {
-    title: "Crêpes",
-    icon: "🥞",
-    displayMode: "cards",
-    items: [
-      { name: "Classique (chocolat, nutella, chantilly)", price: "550 DA" },
-      { name: "La Banana (chocolat, nutella, banane, chantilly)", price: "650 DA" },
-      { name: "La Gourmand (nutella, banane, chocolat, framboise, boule de glace vanille)", price: "800 DA" },
-      { name: "Sugar limon (citron, sucre glacé, chantilly)", price: "650 DA" },
-      { name: "Caramella (caramel beurre salé, sucre glacé, chantilly)", price: "850 DA" },
-      { name: "La bretonne (caramel beurre salé, banane, chantilly)", price: "1200 DA" },
     ],
   },
   {
@@ -279,9 +281,9 @@ const MenuItemCard = ({ item, index }: { item: MenuItem; index: number }) => {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
+      transition={{ duration: 0.2 }}
       className="group relative bg-neutral-900/60 backdrop-blur-sm p-5 sm:p-6 rounded-xl border border-white/5 hover:border-gold/30 transition-all duration-300 hover:bg-neutral-900/80 hover:shadow-lg hover:shadow-gold/10"
     >
       {/* Header: Name and Price */}
@@ -312,10 +314,10 @@ const SimpleMenuList = ({ items }: { items: MenuItem[] }) => (
     {items.map((item, index) => (
       <motion.div
         key={item.name}
-        initial={{ opacity: 0, x: -10 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.3, delay: index * 0.05 }}
+        transition={{ duration: 0.15 }}
         className="flex items-end justify-between py-3 border-b border-white/10 hover:border-gold/30 group transition-colors px-2"
       >
         <div className="flex flex-col">
@@ -339,30 +341,37 @@ const CategoryButton = ({
   isActive: boolean; 
   onClick: () => void;
 }) => {
-  const isBoissons = category.title === "Boissons Chaudes" || category.title === "Boissons Fraîches";
+  const isBoissons =
+    category.title === "Boissons Chaudes" || category.title === "Boissons Fraîches";
   const boissonsParts = isBoissons ? category.title.split(" ") : null;
-  
+
   return (
     <motion.button
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className={`
-        flex flex-col items-center justify-center gap-0.5 px-3 sm:px-4 lg:px-5 py-2.5 rounded-full font-medium text-xs sm:text-sm lg:text-sm transition-all duration-300 w-full h-full min-h-[44px] sm:min-h-[48px]
-        ${isActive 
-          ? 'bg-gold text-black shadow-lg shadow-gold/40 border-2 border-gold' 
-          : 'bg-neutral-900/80 backdrop-blur-sm border-2 border-white/10 text-white hover:border-gold/50 hover:bg-gold/10 hover:shadow-md'
-        }
+        flex items-center justify-center gap-2 px-3 sm:px-4 lg:px-5 py-2.5 rounded-full font-medium text-xs sm:text-sm lg:text-sm transition-all duration-300 w-full h-full min-h-[44px] sm:min-h-[48px]
+        ${isActive
+          ? "bg-gold text-black shadow-lg shadow-gold/40 border-2 border-gold"
+          : "bg-neutral-900/80 backdrop-blur-sm border-2 border-white/10 text-white hover:border-gold/50 hover:bg-gold/10 hover:shadow-md"}
       `}
     >
-      <span className="text-sm sm:text-base lg:text-lg flex-shrink-0">{category.icon}</span>
+      {/* Icône toujours à gauche du texte */}
+      <span className="text-sm sm:text-base lg:text-lg flex-shrink-0">
+        {category.icon}
+      </span>
+
+      {/* Texte : sur une ou deux lignes selon la catégorie */}
       {isBoissons && boissonsParts ? (
-        <div className="flex flex-col items-center">
-          <span className="font-semibold text-center leading-tight">{boissonsParts[0]}</span>
-          <span className="font-semibold text-center leading-tight">{boissonsParts[1]}</span>
-        </div>
+        <span className="font-semibold leading-tight text-center">
+          {boissonsParts[0]}{" "}
+          <span className="block sm:inline">{boissonsParts[1]}</span>
+        </span>
       ) : (
-        <span className="font-semibold text-center leading-tight">{category.title}</span>
+        <span className="font-semibold leading-tight text-center">
+          {category.title}
+        </span>
       )}
     </motion.button>
   );
@@ -370,7 +379,7 @@ const CategoryButton = ({
 
 const Menu = () => {
   const [activeCategory, setActiveCategory] = useState<string>(menuData[0]?.title || "");
-  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
   const categories = useMemo(() => 
     menuData.map(cat => ({ title: cat.title, icon: cat.icon }))
@@ -381,18 +390,8 @@ const Menu = () => {
   }, [activeCategory]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 200);
-    };
-    // Vérifier immédiatement au chargement
-    handleScroll();
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.scrollTo(0, 0);
   }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   return (
     <main className="min-h-screen bg-neutral-950 overflow-x-hidden">
@@ -413,7 +412,7 @@ const Menu = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gold/20 text-gold tracking-[0.15em] uppercase text-xs font-semibold mb-4 sm:mb-6"
+            className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gold/20 text-gold tracking-[0.15em] uppercase text-xs font-semibold mb-3 sm:mb-4"
           >
             Gastronomie Italienne
           </motion.span>
@@ -429,11 +428,20 @@ const Menu = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-white/90 max-w-2xl mx-auto text-base sm:text-lg"
+            className="text-white/90 max-w-2xl mx-auto text-base sm:text-lg mb-4 sm:mb-5"
           >
             Des ingrédients frais, des recettes authentiques et une passion pour 
             l'excellence culinaire.
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="flex justify-center"
+          >
+            <ItalianFlagBar />
+          </motion.div>
         </div>
       </section>
 
@@ -446,14 +454,23 @@ const Menu = () => {
             transition={{ delay: 0.5 }}
             className="grid grid-cols-3 sm:grid-cols-4 lg:flex lg:flex-wrap gap-2.5 sm:gap-3 lg:gap-3 items-stretch"
           >
-            {categories.map((cat) => (
-              <CategoryButton
-                key={cat.title}
-                category={cat}
-                isActive={activeCategory === cat.title}
-                onClick={() => setActiveCategory(cat.title)}
-              />
-            ))}
+            {categories.map((cat, index) => {
+              // Ajouter un espace vide avant Boissons Chaudes (index 8) pour remplacer Crêpes
+              const isBoissonsChaudesPosition = index === 8;
+              return (
+                <>
+                  {isBoissonsChaudesPosition && (
+                    <div key="empty-space" className="min-h-[44px] sm:min-h-[48px]" />
+                  )}
+                  <CategoryButton
+                    key={cat.title}
+                    category={cat}
+                    isActive={activeCategory === cat.title}
+                    onClick={() => setActiveCategory(cat.title)}
+                  />
+                </>
+              );
+            })}
           </motion.div>
         </div>
       </section>
@@ -492,22 +509,30 @@ const Menu = () => {
                     )}
                   </motion.div>
 
-                  {/* Image d'échantillon de la catégorie */}
+                    {/* Image d'échantillon de la catégorie */}
                   {categoryImages[category.title] && (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.6 }}
-                      className="mb-8 sm:mb-12 rounded-2xl overflow-hidden shadow-2xl"
+                      className="mb-8 sm:mb-12 rounded-2xl overflow-hidden shadow-2xl cursor-pointer group"
+                      onClick={() => setSelectedImage(categoryImages[category.title])}
                     >
-                      <div className="relative w-full h-64 sm:h-80 md:h-96 overflow-hidden">
+                      <div className="relative w-full h-64 sm:h-80 md:h-96 overflow-hidden bg-neutral-900/50">
                         <img
                           src={categoryImages[category.title]}
                           alt={category.title}
-                          className="w-full h-full object-cover"
+                          className={`w-full h-full transition-transform duration-700 group-hover:scale-105 ${["Burger", "Boissons Chaudes", "Boissons Fraîches", "Sandwich"].includes(category.title) ? "object-contain" : "object-cover"}`}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                        
+                        {/* Overlay hint */}
+                        <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                           <span className="text-white/80 text-sm font-medium px-4 py-2 rounded-full bg-black/50 backdrop-blur-sm border border-white/20">
+                             Agrandir
+                           </span>
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -570,23 +595,32 @@ const Menu = () => {
 
       <Footer />
 
-      {/* Scroll to Top Button */}
+      {/* Lightbox for Menu Images */}
       <AnimatePresence>
-        {showScrollTop && (
-          <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            whileHover={{ scale: 1.1, y: -2 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={scrollToTop}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="fixed bottom-6 left-6 z-[100] flex flex-col items-center justify-center w-14 h-14 bg-gold text-black rounded-full shadow-2xl hover:shadow-gold/50 transition-all duration-300 group border-2 border-gold/20"
-            aria-label="Retour en haut"
+        {selectedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm"
+            onClick={() => setSelectedImage(null)}
           >
-            <ChevronUp size={20} className="group-hover:translate-y-[-2px] transition-transform duration-300 mb-0.5" strokeWidth={2.5} />
-            <span className="text-[9px] font-bold uppercase tracking-wider">Menu</span>
-          </motion.button>
+            <button
+              className="absolute top-6 right-6 text-white hover:text-gold transition-colors p-2"
+              aria-label="Fermer"
+            >
+              <X size={32} />
+            </button>
+            <motion.img
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              src={selectedImage}
+              alt="Plat agrandi"
+              className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()} 
+            />
+          </motion.div>
         )}
       </AnimatePresence>
     </main>

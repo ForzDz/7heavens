@@ -4,7 +4,7 @@ import { MapPin, Phone, Mail, Clock, MessageCircle, Instagram, Facebook, CheckCi
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import interior3 from "@/assets/interior-3.jpeg";
+import interior3 from "@/assets/interior-3.webp";
 
 interface FormErrors {
   name?: string;

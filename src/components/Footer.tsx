@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Instagram, Facebook } from "lucide-react";
+import ItalianFlagBar from "./ItalianFlagBar";
 
 const Footer = () => {
   return (
@@ -104,14 +105,10 @@ const Footer = () => {
 
         {/* Bottom Bar - Centered */}
         <div className="mt-8 sm:mt-10 pt-5 sm:pt-6 border-t border-white/10 text-center">
-          <p className="text-xs sm:text-sm text-gray-500 mb-3">
-            © 2026 7Heavens Restaurant. Tous droits réservés.
+          <p className="text-xs sm:text-sm text-gray-500 mb-2">
+            © {new Date().getFullYear()} 7Heavens Restaurant. Tous droits réservés.
           </p>
-          <div className="flex items-center gap-2 justify-center">
-            <span className="w-5 h-1 sm:w-6 sm:h-1 bg-green-600"></span>
-            <span className="w-5 h-1 sm:w-6 sm:h-1 bg-white"></span>
-            <span className="w-5 h-1 sm:w-6 sm:h-1 bg-red-600"></span>
-          </div>
+          <ItalianFlagBar className="justify-center" />
         </div>
       </div>
     </footer>

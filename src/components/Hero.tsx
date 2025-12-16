@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import restaurantInterior from "@/assets/restaurant-interior.jpeg";
+import restaurantInterior from "@/assets/restaurant-interior.webp";
+import ItalianFlagBar from "./ItalianFlagBar";
 
 const Hero = () => {
   return (
@@ -46,10 +47,19 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
-            className="text-base sm:text-lg md:text-xl text-cream/80 mb-8 sm:mb-10 max-w-2xl mx-auto px-4"
+            className="text-base sm:text-lg md:text-xl text-cream/80 mb-4 sm:mb-6 max-w-2xl mx-auto px-4"
           >
             Restaurant Premium — Saveurs authentiques d'Italie dans un cadre luxueux
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="mb-6 sm:mb-8 flex justify-center"
+          >
+            <ItalianFlagBar />
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
